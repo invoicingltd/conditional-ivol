@@ -1,0 +1,11 @@
+# Numerical dependency versions for Python 3.13.9.
+# Direct dependencies only; system libraries and transitive dependencies are not fully pinned.
+numpy==2.3.5
+scipy==1.16.3
+pandas==2.3.3
+numba==0.62.1
+llvmlite==0.45.1
+pyarrow==21.0.0
+matplotlib==3.10.6
+threadpoolctl==3.5.0
+pytest==8.4.2

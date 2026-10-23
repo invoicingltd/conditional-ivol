@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "civol-research"
+version = "0.1.0"
+description = "Reproducible conditional idiosyncratic volatility estimation"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=2.2,<2.4",
+  "scipy>=1.15,<1.17",
+  "pandas>=2.2,<3",
+  "numba>=0.61,<0.63",
+  "pyarrow>=19,<22",
+  "matplotlib>=3.9,<3.11",
+  "threadpoolctl>=3.5,<4",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<9"]
+wrds = ["wrds>=3.3,<4"]
+
+[project.scripts]
+civol = "civol.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+
