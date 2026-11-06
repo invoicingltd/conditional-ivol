@@ -4,10 +4,15 @@ Research code for estimating conditional idiosyncratic volatility using a
 broad common factor space, pooled private variance dynamics, and paired-twin
 payoff integration over a 21-session horizon.
 
-The main specification uses formation-information **rank rule A**, with an
-equal-weight residual variance ratio bound of **1.25**. The package also
-includes Bai-Ng and fixed-rank comparisons, simulations with known truth,
-and applications to return predictability and forecast encompassing.
+The current measurement specification uses the formation-information rank
+**max(K_EW, K_BaiNg)**: the original equal-weight rule with bound **1.25**
+and search cap **40**, safeguarded by Bai-Ng ICp2 with search cap **20**.
+This prevents the equal-weight criterion from selecting fewer directions
+than Bai-Ng; it does not guarantee recovery of every common payoff response.
+The versioned `safeguarded-measurement` command changes rank selection only,
+using the original fixed-rank fitting and paired-integration calculations.
+Legacy commands retain their original specifications and output locations
+for replication, including the original rule A and benchmark comparisons.
 
 ## Installation
 
@@ -28,9 +33,10 @@ python -m civol doctor
 `doctor` displays dependency versions and configured paths. The constraints
 file pins the numerical dependencies used with Python 3.13.9.
 
-The estimation commands use a CUDA GPU by default and require a CUDA-enabled
-PyTorch installation. Set `CIVOL_GPU_PYTHON` if PyTorch runs in a separate Python
-environment. For CPU execution, use `--backend numpy`. CPU and GPU results
+Legacy estimation commands use a CUDA GPU by default; the new safeguarded
+command defaults to CPU and accepts `--backend gpu`. GPU execution requires a
+CUDA-enabled PyTorch installation. Set `CIVOL_GPU_PYTHON` if PyTorch runs in a
+separate Python environment. For CPU execution, use `--backend numpy`. CPU and GPU results
 can differ because the backends use different random-number generators and
 precision. GPU failures fall back to NumPy and are recorded as
 `backend=numpy_fallback` with a `gpu_error` field.
@@ -68,6 +74,9 @@ matching input vintages, dependencies, runtime settings, backends, and seeds.
 After building the cache, run:
 
 ```bash
+# Current safeguarded measurement specification (a separate output directory)
+python -m civol safeguarded-measurement --backend gpu --threads 2
+
 # Historical application and benchmark comparisons
 python -m civol application --workers 6 --threads 2 --backend gpu
 python -m civol analyze-application

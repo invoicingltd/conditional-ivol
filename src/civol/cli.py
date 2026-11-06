@@ -11,6 +11,7 @@ import sys
 
 
 COMMANDS = {
+    'safeguarded-measurement': ('civol.safeguarded_measurement', 'Estimate versioned cIVOL with max(EW, Bai-Ng) common rank'),
     'download': ('civol.data.download', 'Download CRSP CIZ and public daily factors'),
     'cache': ('civol.core.crsp_cache', 'Build the wide daily input cache'),
     'application': ('civol.application.run_application', 'Estimate the historical 21-session application'),

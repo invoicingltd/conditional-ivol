@@ -9,6 +9,8 @@ __pycache__/
 *.nbc
 *.nbi
 .pytest_cache/
+.safeguard_test_deps/
+.safeguard_test_cache/
 .coverage
 htmlcov/
 .venv/
