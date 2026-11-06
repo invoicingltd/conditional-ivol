@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "civol-research"
 version = "0.1.0"
-description = "Reproducible conditional idiosyncratic volatility estimation"
+description = "Conditional idiosyncratic volatility estimation"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

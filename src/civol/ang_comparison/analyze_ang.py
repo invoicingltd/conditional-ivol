@@ -1,4 +1,4 @@
-"""Apples-to-apples comparison with Ang, Hodrick, Xing and Zhang (2006).
+"""Compare cIVOL with Ang, Hodrick, Xing and Zhang (2006) IVOL.
 
 Stage 'anchor': Ang IVOL (daily FF3 residual standard deviation over the formation calendar
 month, >= 17 days) for every eligible stock at every month end from the cache, next-month

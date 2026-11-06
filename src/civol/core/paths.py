@@ -1,6 +1,6 @@
 """Portable locations, configured through environment variables before import.
 
-Input data and generated work are deliberately separate from installed source.
+Data and results are stored outside the installed package.
 Relative overrides are resolved against the process's current directory.
 """
 from pathlib import Path
@@ -24,7 +24,7 @@ GPU_PYTHON = _location('CIVOL_GPU_PYTHON', sys.executable)
 
 
 def output_path(stage, *parts):
-    """Return a generated artifact location without creating it on import."""
+    """Return an output path without creating it."""
     return WORK.joinpath(stage, *parts)
 
 

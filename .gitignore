@@ -1,4 +1,4 @@
-# Licensed observations, generated results and all local runtime artifacts
+# Data, results, and local runtime files
 /data/
 /work/
 /dist/

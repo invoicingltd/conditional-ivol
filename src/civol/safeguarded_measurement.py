@@ -1,14 +1,9 @@
-"""Versioned cIVOL implementation with a Bai--Ng safeguard on the EW rank.
+"""Estimate cIVOL with rank max(K_EW, K_BaiNg).
 
-The only numerical change from the legacy rule-A estimator is the selected
-rank: max(K_EW, K_BaiNg).  Fitting, final-state convention, bounded factor law,
-paired integration and the rank-dependent seed are delegated unchanged to
-``rank_rule.estimate_rank_rule.civol_at_rank``.  Legacy workflows and their
-record directories remain available for exact replication.
-
-The safeguard prevents the EW criterion from selecting fewer directions than
-Bai--Ng; it does not guarantee recovery of every common payoff response or
-general residual diversifiability.
+Uses the fixed-rank fitting and integration in
+``rank_rule.estimate_rank_rule.civol_at_rank``.
+The rank floor does not guarantee recovery of every common payoff response
+or residual diversifiability.
 """
 from __future__ import annotations
 
@@ -40,7 +35,7 @@ CONFIG = dict(T=750, H=21, pairs=16384, batches=8, bound=1.25,
 
 
 def configuration(config=None):
-    """Validate an explicitly versioned method; numerical budgets may vary."""
+    """Validate settings, keeping the version's method parameters fixed."""
     result = dict(CONFIG)
     if config is not None:
         unknown = set(config) - set(result)
@@ -67,7 +62,7 @@ def configuration(config=None):
 
 
 def safeguarded_rank(ew_rank, bai_ng_rank):
-    """Combine formation-only ranks without inspecting outcomes or losses."""
+    """Return the larger of the two formation-window ranks."""
     for value in (ew_rank, bai_ng_rank):
         if isinstance(value, (bool, np.bool_)) or int(value) != value or value < 0:
             raise ValueError("Ranks must be nonnegative integers")
@@ -75,7 +70,7 @@ def safeguarded_rank(ew_rank, bai_ng_rank):
 
 
 def select_common_space(x, config=None):
-    """Compute both original selectors once on the same formation panel."""
+    """Compute EW and Bai–Ng ranks on the same formation panel."""
     cfg = configuration(config)
     x = np.asarray(x, dtype=np.float64)
     mu, s, Z = standardize(x)
@@ -90,8 +85,7 @@ def select_common_space(x, config=None):
     if rank < len(curves["equal_weight"]):
         ew_selected = float(curves["equal_weight"][rank])
     else:
-        # In very small panels Bai--Ng can reach N-1 while the original
-        # EW search ends at N-2.  Preserve both original search rules.
+        # Bai–Ng can reach N-1 in small panels; the EW curve ends at N-2.
         residuals = rank_rules.decomposition_at(Z, eig, s, rank)["residuals"]
         ew_selected = rank_rules.equal_weight_ratio(residuals)
     ew_floor = float(min(curves["equal_weight"]))
@@ -115,7 +109,7 @@ def select_common_space(x, config=None):
 
 
 def estimate_panel(x, base_seed, config=None):
-    """Fit the safeguarded method without changing the legacy at-rank kernel."""
+    """Fit and integrate cIVOL at the selected rank."""
     prepared = select_common_space(x, config)
     cfg, rank = prepared["config"], prepared["rank"]
     seed = int(base_seed) + cfg["seed_offset"] + rank
@@ -146,7 +140,7 @@ def _plain(value):
 
 
 def run_date(cache, t_idx, config=None, out=RECORDS):
-    """Write new-version records only, refusing completed or partial targets."""
+    """Write a dated record; raise if any output file already exists."""
     cfg = configuration(config)
     started = time.perf_counter()
     date = str(cache.dates[t_idx])
